@@ -6,12 +6,36 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import { FaXmark } from "react-icons/fa6";
 
 const steps = ['Basic Information', 'Contact Details', 'Educational Details','Work Experience','Skills & Certifications','Review & Submit'];
 
 function UserInputs() {
+  const skillSuggestionArray=['NODE JS','REACT JS','MONGODB','EXPRESS JS','HTML','CSS','PYTHON','JAVASCRIPT','JAVA','C++','DJANGO','FLASK','SQL','POWER BI','EXCEL','DATA ANALYSIS']
  const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
+//  create state for storing resume details
+const [resumeDetails,setresumeDetails]=React.useState({
+  username:"",
+  jobTitle:"",
+  location:"",
+  email:"",
+  mobile:"",
+  github:"",
+  linedin:"",
+  portfolio:"",
+  course:"",
+  college:"",
+  university:"",
+  passoutyear:"",
+  jobType:"",
+  company:"",
+  cLocation:"",
+  duration:"",
+  userSkills:[],
+  summary:""
+})
+console.log(resumeDetails);
 
   const isStepOptional = (step) => {
     return step === 1;
@@ -62,30 +86,30 @@ function UserInputs() {
     case 0: return(<div>
         <h3>Personal Details</h3>
         <div className=" row p-3">
-            <TextField id="standard-basic" label="Full Name" variant="standard" />
-            <TextField id="standard-basic" label="Job Title" variant="standard" />
-            <TextField id="standard-basic" label="Location" variant="standard" />
+            <TextField value={resumeDetails.username} onChange={e=>setresumeDetails({...resumeDetails,username:e.target.value})} id="standard-fname" label="Full Name" variant="standard" />
+            <TextField value={resumeDetails.jobTitle} onChange={e=>setresumeDetails({...resumeDetails,jobTitle:e.target.value})} id="standard-title" label="Job Title" variant="standard" />
+            <TextField value={resumeDetails.location} onChange={e=>setresumeDetails({...resumeDetails,location:e.target.value})} id="standard-location" label="Location" variant="standard" />
         </div>
     </div>
     )
     case 1: return(<div>
         <h3>Contact Details</h3>
           <div className=" row p-3">
-            <TextField id="standard-basic" label="Email" variant="standard" />
-            <TextField id="standard-basic" label="Phone Number" variant="standard" />
-            <TextField id="standard-basic" label="Github Profile Link" variant="standard" />
-            <TextField id="standard-basic" label="Linkedin Profile Link" variant="standard" />
-            <TextField id="standard-basic" label="Portfolio Link" variant="standard" />
+            <TextField value={resumeDetails.email} onChange={e=>setresumeDetails({...resumeDetails,email:e.target.value})} id="standard-email" label="Email" variant="standard" />
+            <TextField value={resumeDetails.mobile} onChange={e=>setresumeDetails({...resumeDetails,mobile:e.target.value})} id="standard-ph" label="Phone Number" variant="standard" />
+            <TextField value={resumeDetails.github} onChange={e=>setresumeDetails({...resumeDetails,github:e.target.value})} id="standard-git" label="Github Profile Link" variant="standard" />
+            <TextField value={resumeDetails.linedin} onChange={e=>setresumeDetails({...resumeDetails,linedin:e.target.value})} id="standard-linkedin" label="Linkedin Profile Link" variant="standard" />
+            <TextField value={resumeDetails.portfolio} onChange={e=>setresumeDetails({...resumeDetails,portfolio:e.target.value})} id="standard-portfolio" label="Portfolio Link" variant="standard" />
         </div>
     </div>
     )
     case 2: return(<div>
         <h3>Educational Details</h3>
         <div className=" row p-3">
-            <TextField id="standard-basic" label="Course Name" variant="standard" />
-            <TextField id="standard-basic" label="College Name " variant="standard" />
-            <TextField id="standard-basic" label="University" variant="standard" />
-            <TextField id="standard-basic" label="Year of Passout" variant="standard" />
+            <TextField value={resumeDetails.course}  onChange={e=>setresumeDetails({...resumeDetails,course:e.target.value})} id="standard-course" label="Course Name" variant="standard" />
+            <TextField value={resumeDetails.college} onChange={e=>setresumeDetails({...resumeDetails,college:e.target.value})} id="standard-college" label="College Name " variant="standard" />
+            <TextField value={resumeDetails.university} onChange={e=>setresumeDetails({...resumeDetails,university:e.target.value})} id="standard-unv" label="University" variant="standard" />
+            <TextField value={resumeDetails.passoutyear} onChange={e=>setresumeDetails({...resumeDetails,passoutyear:e.target.value})} id="yp" label="Year of Passout" variant="standard" />
             
         </div>
     </div>
@@ -93,20 +117,39 @@ function UserInputs() {
     case 3: return(<div>
         <h3>Professional Details</h3>
          <div className=" row p-3">
-            <TextField id="standard-basic" label="Job or Internship" variant="standard" />
-            <TextField id="standard-basic" label="Company Name" variant="standard" />
-            <TextField id="standard-basic" label="Company Location" variant="standard" />
-            <TextField id="standard-basic" label="Duration" variant="standard" />
+            <TextField value={resumeDetails.jobType} onChange={e=>setresumeDetails({...resumeDetails,jobType:e.target.value})} id="standard-job" label="Job or Internship" variant="standard" />
+            <TextField value={resumeDetails.company} onChange={e=>setresumeDetails({...resumeDetails,company:e.target.value})} id="standard-cmp" label="Company Name" variant="standard" />
+            <TextField value={resumeDetails.cLocation} onChange={e=>setresumeDetails({...resumeDetails,cLocation:e.target.value})} id="standard-cmploc" label="Company Location" variant="standard" />
+            <TextField value={resumeDetails.duration} onChange={e=>setresumeDetails({...resumeDetails,duration:e.target.value})} id="standard-dur" label="Duration" variant="standard" />
             
         </div>
     </div>
     )
     case 4: return(<div>
         <h3>Skills</h3>
+        <div className="d-flex align-items-center justify-content-between p-3 w-100">
+           <input type="text" placeholder='Add Skills' className='form-control' />
+           <Button variant='text'>ADD</Button>
+        </div>
+        <h5>Suggestions</h5>
+        <div className="d-flex flex-wrap justify-content-between my-3">
+          {
+          skillSuggestionArray.map((item,index)=>(
+            <Button key={index} variant='outlined'className='m-2'>{item}</Button>
+          ))
+          }
+        </div>
+        <h5>Added Skills : </h5>
+        <div className="d-flex flex-wrap justify-content-between my-3">
+          <Button variant='contained' className='m-1'>NODE JS <FaXmark className='ms-2 cursor-pointer'/></Button>
+        </div>
     </div>
     )
     case 5: return(<div>
         <h3>Summary</h3>
+        <div className="p-3 row">
+          <TextField onChange={e=>setresumeDetails({...resumeDetails,summary:e.target.value})} id="standard-basic-summary" label="Write a short summary of yourself" variant="standard" multiline rows={7} defaultValue={'A Full Stack Developer is a software professional who can work on both the front end (the part of a website or app users see and interact with) and the back end (the server, database, and logic behind the scenes).They handle the complete development process, from designing user interfaces using technologies like HTML, CSS, and JavaScript (React, Angular, etc.) to managing databases and servers using Node.js, Express.js, Python, PHP, or Java along with MongoDB, MySQL, or PostgreSQL.'}/>
+        </div>
     </div>
     )
     default: return null
