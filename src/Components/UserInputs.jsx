@@ -7,36 +7,19 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { FaXmark } from "react-icons/fa6";
+import { addResumeAPI } from '../services/allAPI';
+import { useNavigate } from 'react-router-dom';
+
 
 const steps = ['Basic Information', 'Contact Details', 'Educational Details','Work Experience','Skills & Certifications','Review & Submit'];
 
-function UserInputs() {
+function UserInputs({resumeDetails,setresumeDetails}) {
   const skillSuggestionArray=['NODE JS','REACT JS','MONGODB','EXPRESS JS','HTML','CSS','PYTHON','JAVASCRIPT','JAVA','C++','DJANGO','FLASK','SQL','POWER BI','EXCEL','DATA ANALYSIS']
  const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-//  create state for storing resume details
-const [resumeDetails,setresumeDetails]=React.useState({
-  username:"",
-  jobTitle:"",
-  location:"",
-  email:"",
-  mobile:"",
-  github:"",
-  linedin:"",
-  portfolio:"",
-  course:"",
-  college:"",
-  university:"",
-  passoutyear:"",
-  jobType:"",
-  company:"",
-  cLocation:"",
-  duration:"",
-  userSkills:[],
-  summary:""
-})
 // reference to skill input tag
 const skillRef=React.useRef()
+const navigate=useNavigate()
 console.log(resumeDetails);
 
   const isStepOptional = (step) => {
@@ -99,7 +82,8 @@ const removeSkill=(skill)=>{
   const renderSteps=(stepCount)=>{
    switch(stepCount)
    {
-    case 0: return(<div>
+    case 0: return(
+    <div>
         <h3>Personal Details</h3>
         <div className=" row p-3">
             <TextField value={resumeDetails.username} onChange={e=>setresumeDetails({...resumeDetails,username:e.target.value})} id="standard-fname" label="Full Name" variant="standard" />
@@ -108,7 +92,8 @@ const removeSkill=(skill)=>{
         </div>
     </div>
     )
-    case 1: return(<div>
+    case 1: return(
+    <div>
         <h3>Contact Details</h3>
           <div className=" row p-3">
             <TextField value={resumeDetails.email} onChange={e=>setresumeDetails({...resumeDetails,email:e.target.value})} id="standard-email" label="Email" variant="standard" />
@@ -119,7 +104,8 @@ const removeSkill=(skill)=>{
         </div>
     </div>
     )
-    case 2: return(<div>
+    case 2: return(
+    <div>
         <h3>Educational Details</h3>
         <div className=" row p-3">
             <TextField value={resumeDetails.course}  onChange={e=>setresumeDetails({...resumeDetails,course:e.target.value})} id="standard-course" label="Course Name" variant="standard" />
@@ -130,7 +116,8 @@ const removeSkill=(skill)=>{
         </div>
     </div>
     )
-    case 3: return(<div>
+    case 3: return(
+    <div>
         <h3>Professional Details</h3>
          <div className=" row p-3">
             <TextField value={resumeDetails.jobType} onChange={e=>setresumeDetails({...resumeDetails,jobType:e.target.value})} id="standard-job" label="Job or Internship" variant="standard" />
@@ -141,7 +128,8 @@ const removeSkill=(skill)=>{
         </div>
     </div>
     )
-    case 4: return(<div>
+    case 4: return(
+    <div>
         <h3>Skills</h3>
         <div className="d-flex align-items-center justify-content-between p-3 w-100">
            <input ref={skillRef} type="text" placeholder='Add Skills' className='form-control' />
@@ -169,7 +157,8 @@ const removeSkill=(skill)=>{
         </div>
     </div>
     )
-    case 5: return(<div>
+    case 5: return(
+    <div>
         <h3>Summary</h3>
         <div className="p-3 row">
           <TextField onChange={e=>setresumeDetails({...resumeDetails,summary:e.target.value})} id="standard-basic-summary" label="Write a short summary of yourself" variant="standard" multiline rows={7} defaultValue={'A Full Stack Developer is a software professional who can work on both the front end (the part of a website or app users see and interact with) and the back end (the server, database, and logic behind the scenes).They handle the complete development process, from designing user interfaces using technologies like HTML, CSS, and JavaScript (React, Angular, etc.) to managing databases and servers using Node.js, Express.js, Python, PHP, or Java along with MongoDB, MySQL, or PostgreSQL.'}/>
@@ -178,6 +167,36 @@ const removeSkill=(skill)=>{
     )
     default: return null
    }
+  }
+
+  const handleAddResume =async()=>{
+    const {username,jobTitle,location} =resumeDetails
+    if(!username && !jobTitle && !location)
+    {
+      alert("Please fill the form completely...")
+    }
+    else{
+      // api
+      console.log("api call");
+      
+      try{
+       const result=await addResumeAPI(resumeDetails)
+        console.log(result);
+       if(result.status==201){
+        alert("Resume added successfully")
+         const {id}=result.data
+            
+     // success redirect to view pg
+      navigate(`/resume/${id}/view`)
+      
+       }
+      }catch(err)
+      {
+        console.log(err);
+        
+      }
+      
+    }
   }
 
   return (
@@ -233,9 +252,12 @@ const removeSkill=(skill)=>{
                 Skip
               </Button>
             )}
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button>
+            {activeStep === steps.length - 1 ?
+             <Button onClick={handleAddResume}>Finish</Button> :
+              <Button onClick={handleNext}>Next</Button>
+           }
+           
+            
           </Box>
         </React.Fragment>
       )}
